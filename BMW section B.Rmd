@@ -1,0 +1,52 @@
+---
+title: "BMW"
+output:
+  html_document: default
+  pdf_document: default
+date: "2026-04-12"
+---
+
+SectionA:
+
+The analysis was conducted using the tidyverse package in R. The dataset was first imported using read_csv() and inspected with glimpse() to ensure correct data structure and variable types. The data was then grouped by Year and Region using group_by(), and key metrics were calculated using summarise(), including the average BEV share, total units sold, and total revenue. To visualize trends over time, ggplot2 was used to create a line chart with points, where Year was mapped to the x-axis, BEV share to the y-axis, and Region was represented by different colors. This approach enabled a clear comparison of BEV adoption trends across regions and facilitated the identification of growth patterns and regional differences.
+
+```{r setup, include=FALSE}
+library(tidyverse)
+df <- read_csv("C:/Users/Fengxinyu/Downloads/bmw_global_sales_2018_2025.csv")
+```
+
+
+```{r question_a_trend}
+bev_trend <- df %>%
+  group_by(Year, Region) %>%
+  summarise(
+    BEV_Share = mean(BEV_Share),
+    Units_Sold = sum(Units_Sold),
+    Revenue = sum(Revenue_EUR),
+    .groups = "drop"
+  )
+
+ggplot(bev_trend, aes(x = Year, y = BEV_Share, color = Region)) +
+  geom_line(linewidth = 1.2) +
+  geom_point() +
+  labs(
+    title = "BEV Share Growth Over Time by Region",
+    y = "BEV Share"
+  )
+```
+SectionB:
+
+The scatter plot shows a clear positive relationship between fuel price index and BEV share. As fuel prices increase, the adoption of battery electric vehicles also rises across all regions. The fitted regression lines indicate a consistent upward trend, suggesting that higher fuel costs may incentivize consumers to switch to electric vehicles. This pattern is observed across China, Europe, the USA, and the rest of the world, indicating that the relationship is globally consistent rather than region-specific.
+
+
+```{r question_b_relationship}
+ggplot(df, aes(x = Fuel_Price_Index, y = BEV_Share, color = Region)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Relationship between Fuel Price and BEV Share",
+    x = "Fuel Price Index",
+    y = "BEV Share"
+  )
+```
+
